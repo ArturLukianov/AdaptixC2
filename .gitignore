@@ -5,3 +5,4 @@ objects_tcp/
 .idea/
 .qt/
 *.so
+dist/
