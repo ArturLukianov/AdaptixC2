@@ -1,7 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
+	"time"
 
 	adaptix "github.com/Adaptix-Framework/axc2"
 )
@@ -88,79 +92,79 @@ func (m *ModuleExtender) AgentGenerate(config string, operatingSystem string, li
 	return AgentGenerateBuild(config, operatingSystem, listenerMap)
 }
 
-// func (m *ModuleExtender) AgentCreate(beat []byte) (adaptix.AgentData, error) {
-// 	return CreateAgent(beat)
-// }
+func (m *ModuleExtender) AgentCreate(beat []byte) (adaptix.AgentData, error) {
+	return CreateAgent(beat)
+}
 
-// func (m *ModuleExtender) AgentCommand(client string, cmdline string, agentData adaptix.AgentData, args map[string]any) error {
-// 	command, ok := args["command"].(string)
-// 	if !ok {
-// 		return errors.New("'command' must be set")
-// 	}
+func (m *ModuleExtender) AgentCommand(client string, cmdline string, agentData adaptix.AgentData, args map[string]any) error {
+	command, ok := args["command"].(string)
+	if !ok {
+		return errors.New("'command' must be set")
+	}
 
-// 	taskData, messageData, err := CreateTask(m.ts, agentData, command, args)
-// 	if err != nil {
-// 		return err
-// 	}
+	taskData, messageData, err := CreateTask(m.ts, agentData, command, args)
+	if err != nil {
+		return err
+	}
 
-// 	m.ts.TsTaskCreate(agentData.Id, cmdline, client, taskData)
+	m.ts.TsTaskCreate(agentData.Id, cmdline, client, taskData)
 
-// 	if len(messageData.Message) > 0 || len(messageData.Text) > 0 {
-// 		m.ts.TsAgentConsoleOutput(agentData.Id, messageData.Status, messageData.Message, messageData.Text, false)
-// 	}
+	if len(messageData.Message) > 0 || len(messageData.Text) > 0 {
+		m.ts.TsAgentConsoleOutput(agentData.Id, messageData.Status, messageData.Message, messageData.Text, false)
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
-// func (m *ModuleExtender) AgentPackData(agentData adaptix.AgentData, tasks []adaptix.TaskData) ([]byte, error) {
-// 	packedData, err := PackTasks(agentData, tasks)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (m *ModuleExtender) AgentPackData(agentData adaptix.AgentData, tasks []adaptix.TaskData) ([]byte, error) {
+	packedData, err := PackTasks(agentData, tasks)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return AgentEncryptData(packedData, agentData.SessionKey)
-// }
+	return AgentEncryptData(packedData, agentData.SessionKey)
+}
 
-// func (m *ModuleExtender) AgentPivotPackData(pivotId string, data []byte) (adaptix.TaskData, error) {
-// 	packData, err := PackPivotTasks(pivotId, data)
-// 	if err != nil {
-// 		return adaptix.TaskData{}, err
-// 	}
+func (m *ModuleExtender) AgentPivotPackData(pivotId string, data []byte) (adaptix.TaskData, error) {
+	packData, err := PackPivotTasks(pivotId, data)
+	if err != nil {
+		return adaptix.TaskData{}, err
+	}
 
-// 	randomBytes := make([]byte, 16)
-// 	rand.Read(randomBytes)
-// 	uid := hex.EncodeToString(randomBytes)[:8]
+	randomBytes := make([]byte, 16)
+	rand.Read(randomBytes)
+	uid := hex.EncodeToString(randomBytes)[:8]
 
-// 	taskData := adaptix.TaskData{
-// 		TaskId: uid,
-// 		Type:   TYPE_PROXY_DATA,
-// 		Data:   packData,
-// 		Sync:   false,
-// 	}
+	taskData := adaptix.TaskData{
+		TaskId: uid,
+		Type:   TYPE_PROXY_DATA,
+		Data:   packData,
+		Sync:   false,
+	}
 
-// 	return taskData, nil
-// }
+	return taskData, nil
+}
 
-// func (m *ModuleExtender) AgentProcessData(agentData adaptix.AgentData, packedData []byte) ([]byte, error) {
-// 	decryptData, err := AgentDecryptData(packedData, agentData.SessionKey)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (m *ModuleExtender) AgentProcessData(agentData adaptix.AgentData, packedData []byte) ([]byte, error) {
+	decryptData, err := AgentDecryptData(packedData, agentData.SessionKey)
+	if err != nil {
+		return nil, err
+	}
 
-// 	taskData := adaptix.TaskData{
-// 		Type:        TYPE_TASK,
-// 		AgentId:     agentData.Id,
-// 		FinishDate:  time.Now().Unix(),
-// 		MessageType: MESSAGE_SUCCESS,
-// 		Completed:   true,
-// 		Sync:        true,
-// 	}
+	taskData := adaptix.TaskData{
+		Type:        TYPE_TASK,
+		AgentId:     agentData.Id,
+		FinishDate:  time.Now().Unix(),
+		MessageType: MESSAGE_SUCCESS,
+		Completed:   true,
+		Sync:        true,
+	}
 
-// 	resultTasks := ProcessTasksResult(m.ts, agentData, taskData, decryptData)
+	resultTasks := ProcessTasksResult(m.ts, agentData, taskData, decryptData)
 
-// 	for _, task := range resultTasks {
-// 		m.ts.TsTaskUpdate(agentData.Id, task)
-// 	}
+	for _, task := range resultTasks {
+		m.ts.TsTaskUpdate(agentData.Id, task)
+	}
 
-// 	return nil, nil
-// }
+	return nil, nil
+}

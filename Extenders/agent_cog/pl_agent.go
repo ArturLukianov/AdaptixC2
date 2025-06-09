@@ -64,7 +64,7 @@ func AgentGenerateBuild(agentConfig string, operatingSystem string, listenerMap 
 	// 	return nil, "", err
 	// }
 
-	cmdBuild := fmt.Sprintf("cargo build --release && cp ./target/release/release/src_cog.exe %s", buildPath)
+	cmdBuild := fmt.Sprintf("cargo build --release --target x86_64-pc-windows-gnu && cp ./target/release/release/src_cog.exe %s", buildPath)
 	runnerCmdBuild := exec.Command("sh", "-c", cmdBuild)
 	runnerCmdBuild.Dir = currentDir + "/" + SrcPath
 	runnerCmdBuild.Stdout = &stdout

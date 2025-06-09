@@ -3,5 +3,98 @@
   "extender_file": "agent_cog.so",
 
   "agent_name": "cog",
-  "agent_watermark": "f15e8492"
+  "agent_watermark": "f15e8492",
+
+  "listeners": [
+    {
+      "listener_name": "CogStegoHTTP",
+      "configs": [
+        {
+          "operating_system": "windows",
+          "handler": "handler_external",
+          "generate_ui": {
+            "layout": "glayout",
+            "elements": [
+              {
+                "type": "label",
+                "text": "Arch:",
+                "position": [0, 0, 1, 1]
+              },
+              {
+                "type": "combo",
+                "items": ["x64", "x86"],
+                "id": "arch",
+                "position": [0, 1, 1, 2]
+              },
+              {
+                "type": "label",
+                "text": "Format:",
+                "position": [1, 0, 1, 1]
+              },
+              {
+                "type": "combo",
+                "items": ["Exe"],
+                "id": "format",
+                "position": [1, 1, 1, 2]
+              },
+              {
+                "type": "label",
+                "text": "Sleep:",
+                "position": [2, 0, 1, 1]
+              },
+              {
+                "type": "input",
+                "id": "sleep",
+                "placeholder": "1h 2m 5s",
+                "text": "4s",
+                "position": [2, 1, 1, 1]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "handlers": [
+    {
+      "id": "handler_external",
+
+      "commands": [
+        {
+          "command": "cat",
+          "message": "Task: read file",
+          "description": "Read first 2048 bytes of the specified file",
+          "example": "cat c:\\\\file.txt",
+          "args": ["STRING <path>"]
+        },
+        {
+          "command": "cd",
+          "message": "Task: change working directory",
+          "description": "Change current working directory",
+          "example": "cd C:\\Windows\\Temp",
+          "args": ["STRING <path>"]
+        },
+        {
+          "command": "cp",
+          "message": "Task: copy file",
+          "description": "Copy file",
+          "example": "cp src.txt dst.txt",
+          "args": ["STRING <src>", "STRING <dst>"]
+        },
+        {
+          "command": "disks",
+          "message": "Task: show mounted disks",
+          "description": "Lists mounted drives on current system",
+          "example": "disks"
+        },
+        {
+          "command": "download",
+          "message": "Task: download file to teamserver",
+          "description": "Download a file",
+          "example": "download C:\\file.txt",
+          "args": ["STRING <file>"]
+        }
+      ]
+    }
+  ]
 }
